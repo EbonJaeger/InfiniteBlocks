@@ -1,0 +1,23 @@
+main: me.gnat008.infiniteblocks.InfiniteBlocks
+version: 0.0.1
+name: InfiniteBlocks
+author: Gnat008
+
+commands:
+  infiniteblocks:
+    description: View information and commands related to the InfiniteBlocks plugin.
+    aliases: [ib]
+
+permissions:
+  infiniteblocks.*:
+    default: op
+    children:
+      infiniteblocks.setregion: true
+      infiniteblocks.removeregion: true
+      infiniteblocks.reload: true
+  infiniteblocks.setregion:
+    default: false
+  infiniteblocks.removeregion:
+    default: false
+  infiniteblocks.reload:
+    default: false
