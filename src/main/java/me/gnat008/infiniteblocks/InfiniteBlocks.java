@@ -2,7 +2,8 @@ package me.gnat008.infiniteblocks;
 
 import com.garbagemule.MobArena.MobArena;
 import com.garbagemule.MobArena.framework.ArenaMaster;
-import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import me.gnat008.infiniteblocks.command.InfiniteBlocksCommand;
 import me.gnat008.infiniteblocks.config.InfiniteBlocksConfig;
 import me.gnat008.infiniteblocks.listeners.MobArenaListener;
 import me.gnat008.infiniteblocks.util.YAMLConfig;
@@ -19,12 +20,12 @@ import java.util.logging.Logger;
 public class InfiniteBlocks extends JavaPlugin {
 
     private static Logger log = Bukkit.getServer().getLogger();
-    private static PluginDescriptionFile info;
 
-    private static boolean foundMA = false, foundWE = false;
+    private static boolean foundMA = false;
 
     public static ArenaMaster am;
-    public static WorldEdit wePlugin;
+    public static PluginDescriptionFile info;
+    public static WorldEditPlugin wePlugin;
 
     private PluginManager pm;
     private YAMLConfigManager configManager;
@@ -41,8 +42,7 @@ public class InfiniteBlocks extends JavaPlugin {
 
         // Get the WorldEdit plugin
         if (pm.isPluginEnabled("WorldEdit")) {
-            wePlugin = (WorldEdit) pm.getPlugin("WorldEdit");
-            foundWE = true;
+            wePlugin = (WorldEditPlugin) pm.getPlugin("WorldEdit");
             printToConsole("WorldEdit found!", false);
         } else {
             printToConsole("WorldEdit not found! Disabling InfiniteBlocks.", true);
@@ -53,6 +53,7 @@ public class InfiniteBlocks extends JavaPlugin {
         String[] header1 = {"InfiniteBlocks Configuration File", "---------------------", "Created by Gnat008"};
         try {
             mainConfig = configManager.getNewConfig("config.yml", header1);
+            printToConsole("Configuration file 'config.yml' generation completed successfully.", false);
         } catch (Exception e) {
             printToConsole("Configuration file 'config.yml' generation failed.", true);
             e.printStackTrace();
@@ -65,10 +66,14 @@ public class InfiniteBlocks extends JavaPlugin {
         String[] header2 = {"InfiniteBlocks Region File", "---------------------", "Stores region data."};
         try {
             regionConfig = configManager.getNewConfig("data/regions.yml", header2);
+            printToConsole("Configuration file 'regions.yml' generation completed successfully.", false);
         } catch (Exception e) {
             printToConsole("Configuration file 'regions.yml' generation failed.", true);
             e.printStackTrace();
         }
+
+        // Set the Command Executor
+        getCommand("infiniteblocks").setExecutor(new InfiniteBlocksCommand(this));
 
         setupListeners();
         printToConsole("v" + info.getVersion() + ": Successfully enabled!", false);
@@ -83,8 +88,6 @@ public class InfiniteBlocks extends JavaPlugin {
             foundMA = true;
             printToConsole("MobArena found!", false);
         }
-
-
     }
 
     public static void printToConsole(String msg, boolean warn) {
@@ -112,8 +115,8 @@ public class InfiniteBlocks extends JavaPlugin {
         return foundMA;
     }
 
-    public static boolean foundWE() {
-        return foundWE;
+    public boolean hasPermission(Player p, String node) {
+        return p.hasPermission("infiniteblocks." + node);
     }
 
     public YAMLConfig getMainConfig() {

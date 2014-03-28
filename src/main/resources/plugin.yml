@@ -2,6 +2,7 @@ main: me.gnat008.infiniteblocks.InfiniteBlocks
 version: 0.0.1
 name: InfiniteBlocks
 author: Gnat008
+depend: [WorldEdit]
 
 commands:
   infiniteblocks:
