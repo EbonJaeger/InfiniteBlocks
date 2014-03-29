@@ -16,9 +16,15 @@ permissions:
       infiniteblocks.setregion: true
       infiniteblocks.removeregion: true
       infiniteblocks.reload: true
+      infiniteblocks.list: true
+      infiniteblocks.info: true
   infiniteblocks.setregion:
     default: false
   infiniteblocks.removeregion:
     default: false
   infiniteblocks.reload:
     default: false
+  infiniteblocks.list
+    default: false
+  infiniteblocks.info
+    default: true

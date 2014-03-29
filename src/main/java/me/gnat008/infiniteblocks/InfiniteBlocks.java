@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 
 public class InfiniteBlocks extends JavaPlugin {
 
+    private static InfiniteBlocks plugin;
     private static Logger log = Bukkit.getServer().getLogger();
 
     private static boolean foundMA = false;
@@ -38,6 +39,7 @@ public class InfiniteBlocks extends JavaPlugin {
     public void onEnable() {
         configManager = new YAMLConfigManager(this);
         info = getDescription();
+        plugin = this;
         pm = getServer().getPluginManager();
 
         // Get the WorldEdit plugin
@@ -63,7 +65,7 @@ public class InfiniteBlocks extends JavaPlugin {
         mainConfig.reloadConfig();
 
         // Generate the region log file
-        String[] header2 = {"InfiniteBlocks Region File", "---------------------", "Stores region data."};
+        String[] header2 = {"InfiniteBlocks Region File", "---------------------", "Stores region data.", "DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!"};
         try {
             regionConfig = configManager.getNewConfig("data/regions.yml", header2);
             printToConsole("Configuration file 'regions.yml' generation completed successfully.", false);
@@ -117,6 +119,10 @@ public class InfiniteBlocks extends JavaPlugin {
 
     public boolean hasPermission(Player p, String node) {
         return p.hasPermission("infiniteblocks." + node);
+    }
+
+    public static InfiniteBlocks getInstance() {
+        return plugin;
     }
 
     public YAMLConfig getMainConfig() {
