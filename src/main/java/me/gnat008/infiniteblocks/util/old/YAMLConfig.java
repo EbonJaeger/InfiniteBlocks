@@ -1,4 +1,4 @@
-package me.gnat008.infiniteblocks.util;
+package me.gnat008.infiniteblocks.util.old;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

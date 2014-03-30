@@ -4,7 +4,7 @@ import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import me.gnat008.infiniteblocks.InfiniteBlocks;
-import me.gnat008.infiniteblocks.util.YAMLConfig;
+import me.gnat008.infiniteblocks.util.old.YAMLConfig;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;

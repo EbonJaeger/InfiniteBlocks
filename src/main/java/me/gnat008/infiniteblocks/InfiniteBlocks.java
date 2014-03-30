@@ -6,8 +6,8 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.gnat008.infiniteblocks.command.InfiniteBlocksCommand;
 import me.gnat008.infiniteblocks.config.InfiniteBlocksConfig;
 import me.gnat008.infiniteblocks.listeners.MobArenaListener;
-import me.gnat008.infiniteblocks.util.YAMLConfig;
-import me.gnat008.infiniteblocks.util.YAMLConfigManager;
+import me.gnat008.infiniteblocks.util.old.YAMLConfig;
+import me.gnat008.infiniteblocks.util.old.YAMLConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -64,6 +64,7 @@ public class InfiniteBlocks extends JavaPlugin {
         config = new InfiniteBlocksConfig(mainConfig);
         mainConfig.reloadConfig();
 
+        /*
         // Generate the region log file
         String[] header2 = {"InfiniteBlocks Region File", "---------------------", "Stores region data.", "DO NOT EDIT UNLESS YOU REALLY KNOW WHAT YOU ARE DOING!"};
         try {
@@ -73,6 +74,8 @@ public class InfiniteBlocks extends JavaPlugin {
             printToConsole("Configuration file 'regions.yml' generation failed.", true);
             e.printStackTrace();
         }
+        */
+
 
         // Set the Command Executor
         getCommand("infiniteblocks").setExecutor(new InfiniteBlocksCommand(this));

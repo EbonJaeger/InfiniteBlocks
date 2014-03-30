@@ -1,7 +1,7 @@
 package me.gnat008.infiniteblocks.config;
 
-import me.gnat008.infiniteblocks.util.Options;
-import me.gnat008.infiniteblocks.util.YAMLConfig;
+import me.gnat008.infiniteblocks.util.old.Options;
+import me.gnat008.infiniteblocks.util.old.YAMLConfig;
 
 public class InfiniteBlocksConfig extends Options {
 
