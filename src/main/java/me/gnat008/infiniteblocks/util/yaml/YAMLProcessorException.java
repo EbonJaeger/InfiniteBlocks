@@ -1,4 +1,4 @@
-package me.gnat008.infiniteblocks.util;
+package me.gnat008.infiniteblocks.util.yaml;
 
 public class YAMLProcessorException extends Exception {
 

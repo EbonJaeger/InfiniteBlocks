@@ -1,4 +1,4 @@
-package me.gnat008.infiniteblocks.util;
+package me.gnat008.infiniteblocks.util.yaml;
 
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;

@@ -1,12 +1,18 @@
 package me.gnat008.infiniteblocks.command;
 
+import com.sk89q.minecraft.util.commands.CommandException;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
+import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import me.gnat008.infiniteblocks.InfiniteBlocks;
+import me.gnat008.infiniteblocks.managers.RegionManager;
+import me.gnat008.infiniteblocks.regions.BlockCuboidRegion;
+import me.gnat008.infiniteblocks.regions.BlockPolygonalRegion;
+import me.gnat008.infiniteblocks.regions.BlockRegion;
 import me.gnat008.infiniteblocks.util.old.YAMLConfig;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -101,21 +107,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
                     if (we.getSelection(player) != null) {
                         Selection selection = we.getSelection(player);
 
-                        Location point1 = selection.getMinimumPoint();
-                        Location point2 = selection.getMaximumPoint();
 
-                        double pt1X = point1.getX();
-                        double pt1Y = point1.getY();
-                        double pt1Z = point1.getZ();
-
-                        double pt2X = point2.getX();
-                        double pt2Y = point2.getY();
-                        double pt2Z = point2.getZ();
-
-                        BlockVector pt1 = new BlockVector(pt1X, pt1Y, pt1Z);
-                        BlockVector pt2 = new BlockVector(pt2X, pt2Y, pt2Z);
-
-                        setRegion(player, args[1], pt1, pt2);
                         return true;
                     } else {
                         InfiniteBlocks.printToPlayer(player, "You must have a selection first!", true);
@@ -183,4 +175,48 @@ public class InfiniteBlocksCommand implements CommandExecutor {
             InfiniteBlocks.printToPlayer(player, "A region with that name already exists!", true);
         }*/
     }
+
+    private Selection getSelection(Player player) {
+        Selection selection = we.getSelection(player);
+
+        if (selection == null) {
+            InfiniteBlocks.printToPlayer(player, "You must have a selection first!", true);
+            return null;
+        }
+
+        return selection;
+    }
+
+    // Create s region from a player's selection.
+    private BlockRegion createRegionFromSelection(Player player, String id) throws CommandException {
+        Selection selection = getSelection(player);
+
+        // Detect the type of region
+        if (selection instanceof Polygonal2DSelection) {
+            Polygonal2DSelection polySel = (Polygonal2DSelection) selection;
+
+            int minY = polySel.getNativeMinimumPoint().getBlockY();
+            int maxY = polySel.getNativeMaximumPoint().getBlockY();
+
+            return new BlockPolygonalRegion(id, polySel.getNativePoints(), minY, maxY);
+        } else if (selection instanceof CuboidSelection) {
+            BlockVector min = selection.getNativeMinimumPoint().toBlockVector();
+            BlockVector max = selection.getNativeMaximumPoint().toBlockVector();
+
+            return new BlockCuboidRegion(id, min, max);
+        } else {
+            throw new CommandException("You can only use cuboids and polygons for InfiniteBlock regions!");
+        }
+    }
+
+    private void commitChanges(CommandSender sender, RegionManager regionManager) throws CommandException {
+        commitChanges(sender, regionManager, false);
+    }
+
+    private void reloadChanges(CommandSender sender, RegionManager regionManager) throws CommandException {
+        reloadChanges(sender, regionManager, false);
+    }
+
+    // Save the region database.
+
 }

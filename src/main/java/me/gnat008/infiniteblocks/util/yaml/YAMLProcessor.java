@@ -1,4 +1,4 @@
-package me.gnat008.infiniteblocks.util;
+package me.gnat008.infiniteblocks.util.yaml;
 
 /*
  * YAML configuration loader. To use this class, construct it with path to

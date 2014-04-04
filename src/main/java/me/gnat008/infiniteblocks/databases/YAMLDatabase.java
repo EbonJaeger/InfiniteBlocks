@@ -6,9 +6,9 @@ import com.sk89q.worldedit.Vector;
 import me.gnat008.infiniteblocks.regions.BlockCuboidRegion;
 import me.gnat008.infiniteblocks.regions.BlockPolygonalRegion;
 import me.gnat008.infiniteblocks.regions.BlockRegion;
-import me.gnat008.infiniteblocks.util.YAMLFormat;
-import me.gnat008.infiniteblocks.util.YAMLNode;
-import me.gnat008.infiniteblocks.util.YAMLProcessor;
+import me.gnat008.infiniteblocks.util.yaml.YAMLFormat;
+import me.gnat008.infiniteblocks.util.yaml.YAMLNode;
+import me.gnat008.infiniteblocks.util.yaml.YAMLProcessor;
 
 import java.io.File;
 import java.io.FileNotFoundException;
