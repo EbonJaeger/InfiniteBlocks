@@ -7,12 +7,14 @@ import com.sk89q.worldedit.bukkit.selections.CuboidSelection;
 import com.sk89q.worldedit.bukkit.selections.Polygonal2DSelection;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import me.gnat008.infiniteblocks.InfiniteBlocks;
+import me.gnat008.infiniteblocks.databases.RegionDatabaseException;
 import me.gnat008.infiniteblocks.managers.RegionManager;
 import me.gnat008.infiniteblocks.regions.BlockCuboidRegion;
 import me.gnat008.infiniteblocks.regions.BlockPolygonalRegion;
 import me.gnat008.infiniteblocks.regions.BlockRegion;
 import me.gnat008.infiniteblocks.util.old.YAMLConfig;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +29,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
     private YAMLConfig mainConfig;
     private YAMLConfig regionsConfig;
 
-    private enum Action {HELP, INFO, LIST, RELOAD, REMOVE, SET}
+    private enum Action {DEFINE, HELP, INFO, LIST, REDEFINE, RELOAD, REMOVE}
 
     public InfiniteBlocksCommand(InfiniteBlocks plugin) {
         this.plugin = plugin;
@@ -102,17 +104,29 @@ public class InfiniteBlocksCommand implements CommandExecutor {
                 //removeRegion(player, region);
                 return true;
 
-            case SET:
+            case DEFINE:
                 if (args.length == 2) {
-                    if (we.getSelection(player) != null) {
-                        Selection selection = we.getSelection(player);
-
-
-                        return true;
-                    } else {
-                        InfiniteBlocks.printToPlayer(player, "You must have a selection first!", true);
-                        return true;
+                    try {
+                        define(player, args[1]);
+                    } catch (CommandException e) {
+                        InfiniteBlocks.printToPlayer(player, e.getMessage(), true);
                     }
+
+                    return true;
+                } else {
+                    displayHelp(player);
+                    return true;
+                }
+
+            case REDEFINE:
+                if (args.length == 2) {
+                    try {
+                        redefine(player, args[1]);
+                    } catch (CommandException e) {
+                        InfiniteBlocks.printToPlayer(player, e.getMessage(), true);
+                    }
+
+                    return true;
                 } else {
                     displayHelp(player);
                     return true;
@@ -122,59 +136,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
         return false;
     }
 
-    private void displayHelp(Player player) {
-        String version = InfiniteBlocks.info.getVersion();
-        List<String> authors = InfiniteBlocks.info.getAuthors();
-
-        String[] msg = {"---------------------",
-                ChatColor.GOLD + "     InfiniteBlocks Help Page:",
-                "---------------------",
-                ChatColor.GOLD + "Version: " + ChatColor.GREEN + version,
-                ChatColor.GOLD + "Author: " + ChatColor.GREEN + authors,
-                "---------------------",
-                ChatColor.WHITE + "/infiniteblocks help" + ChatColor.GOLD + " - Displays this help page.",
-                ChatColor.WHITE + "/infiniteblocks reload" + ChatColor.GOLD + " - Reloads the config.",
-                ChatColor.WHITE + "/infiniteblocks set <region>" + ChatColor.GOLD + " - Sets the selected region.",
-                ChatColor.WHITE + "/infiniteblocks remove <region>" + ChatColor.GOLD + " - Removes the region with that name."
-        };
-
-        player.sendMessage(msg);
-    }
-
-    private void reload(Player player) {
-        mainConfig.reloadConfig();
-
-        InfiniteBlocks.printToConsole("Config file has been reloaded!", false);
-
-        if (player != null) {
-            InfiniteBlocks.printToPlayer(player, "Config file has been reloaded!", false);
-        }
-    }
-
-    private void setRegion(Player player, String id, BlockVector pt1, BlockVector pt2) {
-        /*if (!regionsConfig.contains("regions." + id)) {
-            BlockRegion region = new BlockRegion(id, pt1, pt2);
-
-            if (!(region.isValidId(id))) {
-                InfiniteBlocks.printToPlayer(player, "That is not a valid id!", true);
-                return;
-            }
-
-            String min = region.getMin().toString();
-            String max = region.getMax().toString();
-            String owner = region.getOwner();
-
-            regionsConfig.set("regions." + id + ".min", min);
-            regionsConfig.set("regions." + id + ".max", max);
-            regionsConfig.set("regions." + id + ".owner", owner);
-            regionsConfig.saveConfig();
-            regionsConfig.reloadConfig();
-
-            InfiniteBlocks.printToPlayer(player, "Region created successfully!", false);
-        } else {
-            InfiniteBlocks.printToPlayer(player, "A region with that name already exists!", true);
-        }*/
-    }
+    private World getWorld()
 
     private Selection getSelection(Player player) {
         Selection selection = we.getSelection(player);
@@ -218,5 +180,149 @@ public class InfiniteBlocksCommand implements CommandExecutor {
     }
 
     // Save the region database.
+    private void commitChanges(CommandSender sender, RegionManager regionManager, boolean silent) throws CommandException {
+        try {
+            if (!silent && regionManager.getRegions().size() >= 500) {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    InfiniteBlocks.printToPlayer(player, "Saving region list to disk.", false);
+                } else {
+                    InfiniteBlocks.printToConsole("Saving region list to disk.", false);
+                }
+            }
 
+            regionManager.save();
+        } catch (RegionDatabaseException e) {
+            throw new CommandException("Regions did not save: " + e.getMessage());
+        }
+    }
+
+    // Load the region database.
+    private void reloadChanges(CommandSender sender, RegionManager regionManager, boolean silent) throws CommandException {
+        try {
+            if (!silent && regionManager.getRegions().size() >= 500) {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
+                    InfiniteBlocks.printToPlayer(player, "Loading region list from disk.", false);
+                } else {
+                    InfiniteBlocks.printToConsole("Loading region list from disk.", false);
+                }
+            }
+
+            regionManager.load();
+        } catch (RegionDatabaseException e) {
+            throw new CommandException("Regions did not load: " + e.getMessage());
+        }
+    }
+
+    public void displayHelp(Player player) {
+        String version = InfiniteBlocks.info.getVersion();
+        List<String> authors = InfiniteBlocks.info.getAuthors();
+
+        String[] msg = {"---------------------",
+                ChatColor.GOLD + "     InfiniteBlocks Help Page:",
+                "---------------------",
+                ChatColor.GOLD + "Version: " + ChatColor.GREEN + version,
+                ChatColor.GOLD + "Author: " + ChatColor.GREEN + authors,
+                "---------------------",
+                ChatColor.WHITE + "/infiniteblocks help" + ChatColor.GOLD + " - Displays this help page.",
+                ChatColor.WHITE + "/infiniteblocks reload" + ChatColor.GOLD + " - Reloads the config.",
+                ChatColor.WHITE + "/infiniteblocks set <region>" + ChatColor.GOLD + " - Sets the selected region.",
+                ChatColor.WHITE + "/infiniteblocks remove <region>" + ChatColor.GOLD + " - Removes the region with that name."
+        };
+
+        player.sendMessage(msg);
+    }
+
+    public void reload(Player player) {
+        mainConfig.reloadConfig();
+
+        InfiniteBlocks.printToConsole("Config file has been reloaded!", false);
+
+        if (player != null) {
+            InfiniteBlocks.printToPlayer(player, "Config file has been reloaded!", false);
+        }
+    }
+
+    // Define a new region.
+    public void define(Player player, String id) throws CommandException {
+        // Get and validate the region ID.
+        String validID = validateRegionID(id, false);
+
+        // Can't replace regions with this command.
+        RegionManager regionManager = plugin.getGlobalRegionManager().get(player.getWorld());
+        if (regionManager.hasRegion(validID)) {
+            throw new CommandException("Region with that name is already defined! To change it's shape, use /region redefine " + validID);
+        }
+
+        // Make a region from the user's selection.
+        BlockRegion region = createRegionFromSelection(player, validID);
+
+        // Set the region's owner.
+        region.setOwner(player.getUniqueId().toString());
+
+        regionManager.addRegion(region);
+        commitChanges(player, regionManager);
+
+        // Tell the user.
+        InfiniteBlocks.printToPlayer(player, "A new region had been created: " + ChatColor.WHITE + validID, false);
+    }
+
+    // Redefine a region with a new selection.
+    public void redefine(Player player, String id) throws CommandException {
+        World world = player.getWorld();
+
+        // Get and validate the region ID.
+        String validID = validateRegionID(id, false);
+
+        // Look up the existing region.
+        RegionManager regionManager = plugin.getGlobalRegionManager().get(world);
+        BlockRegion existing = findExistingRegion(regionManager, validID, false);
+
+        // Make a region from the user's selection.
+        BlockRegion region = createRegionFromSelection(player, validID);
+
+        // Copy details from the old region to the new one.
+        region.setOwner(existing.getOwner());
+        try {
+            region.setParent(existing.getParent());
+        } catch (BlockRegion.CircularInheritanceException ignore) {
+            // This should not be thrown.
+        }
+
+        regionManager.addRegion(region);
+        commitChanges(player, regionManager);
+
+        // Tell the user.
+        InfiniteBlocks.printToPlayer(player, "Region updated with new area: " + ChatColor.WHITE + validID, false);
+    }
+
+    // Get info about a region.
+    public void info(CommandSender sender, String id, boolean fromID) throws CommandException {
+        World world = getWorld(sender, 'w');
+
+        // Look up the existing region.
+        RegionManager regionManager = plugin.getGlobalRegionManager().get(world);
+        BlockRegion existing;
+
+        if (!fromID) {
+            if (!(sender instanceof Player)) {
+                throw new CommandException("Please specify the region with /infiniteblocks info <world_name> <region_id>.");
+            }
+
+            existing = findRegionStandingIn(regionManager, (Player) sender, true);
+        } else {
+            existing = findExistingRegion(regionManager, id, true);
+        }
+
+        // Print the region's information.
+        RegionPrintoutBuilder printout = new RegionPrintoutBuilder(existing);
+        printout.appendRegionInfo(existing);
+        printout.send(sender);
+    }
+
+    // List the regions.
+    public void list(CommandSender sender) throws CommandException {
+
+    }
 }
