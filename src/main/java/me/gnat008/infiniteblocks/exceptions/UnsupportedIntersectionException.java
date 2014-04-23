@@ -1,4 +1,4 @@
-package me.gnat008.infiniteblocks.regions;
+package me.gnat008.infiniteblocks.exceptions;
 
 public class UnsupportedIntersectionException extends Exception {
 

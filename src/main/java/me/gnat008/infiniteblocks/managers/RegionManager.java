@@ -2,8 +2,10 @@ package me.gnat008.infiniteblocks.managers;
 
 import com.sk89q.worldedit.Vector;
 import me.gnat008.infiniteblocks.databases.RegionDatabase;
-import me.gnat008.infiniteblocks.databases.RegionDatabaseException;
+import me.gnat008.infiniteblocks.exceptions.RegionDatabaseException;
+import me.gnat008.infiniteblocks.regions.ApplicableRegionSet;
 import me.gnat008.infiniteblocks.regions.BlockRegion;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -75,6 +77,16 @@ public abstract class RegionManager {
 
     // Remove a region.
     public abstract void removeRegion(String id);
+
+    // Get an object for a point for rules to be applied with. Use this in order
+    // to query for flag data or membership data for a given point.
+    public ApplicableRegionSet getApplicableRegions(Location loc) {
+        return getApplicableRegions(com.sk89q.worldedit.bukkit.BukkitUtil.toVector(loc));
+    }
+
+    public abstract ApplicableRegionSet getApplicableRegions(Vector pt);
+
+    public abstract ApplicableRegionSet getApplicableRegions(BlockRegion region);
 
     // Get a list of region ID's that contain a given point.
     public abstract List<String> getApplicableRegionsIDs(Vector pt);

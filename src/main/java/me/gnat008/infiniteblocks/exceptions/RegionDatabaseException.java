@@ -1,4 +1,4 @@
-package me.gnat008.infiniteblocks.databases;
+package me.gnat008.infiniteblocks.exceptions;
 
 public class RegionDatabaseException extends Exception {
 

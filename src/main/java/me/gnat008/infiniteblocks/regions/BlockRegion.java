@@ -3,6 +3,7 @@ package me.gnat008.infiniteblocks.regions;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;
+import me.gnat008.infiniteblocks.exceptions.UnsupportedIntersectionException;
 import org.bukkit.entity.Player;
 
 import java.awt.geom.Line2D;

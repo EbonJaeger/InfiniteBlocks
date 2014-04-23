@@ -3,7 +3,7 @@ package me.gnat008.infiniteblocks.managers;
 import me.gnat008.infiniteblocks.InfiniteBlocks;
 import me.gnat008.infiniteblocks.config.ConfigurationManager;
 import me.gnat008.infiniteblocks.databases.RegionDatabase;
-import me.gnat008.infiniteblocks.databases.RegionDatabaseException;
+import me.gnat008.infiniteblocks.exceptions.RegionDatabaseException;
 import me.gnat008.infiniteblocks.databases.YAMLDatabase;
 import org.bukkit.World;
 

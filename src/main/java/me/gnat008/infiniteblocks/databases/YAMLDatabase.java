@@ -3,6 +3,7 @@ package me.gnat008.infiniteblocks.databases;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;
+import me.gnat008.infiniteblocks.exceptions.RegionDatabaseException;
 import me.gnat008.infiniteblocks.regions.BlockCuboidRegion;
 import me.gnat008.infiniteblocks.regions.BlockPolygonalRegion;
 import me.gnat008.infiniteblocks.regions.BlockRegion;

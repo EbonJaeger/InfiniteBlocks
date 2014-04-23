@@ -1,5 +1,6 @@
 package me.gnat008.infiniteblocks.databases;
 
+import me.gnat008.infiniteblocks.exceptions.RegionDatabaseException;
 import me.gnat008.infiniteblocks.managers.RegionManager;
 
 public abstract class AbstractRegionDatabase implements RegionDatabase {

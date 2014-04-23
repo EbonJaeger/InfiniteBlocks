@@ -2,6 +2,7 @@ package me.gnat008.infiniteblocks.managers;
 
 import com.sk89q.worldedit.Vector;
 import me.gnat008.infiniteblocks.databases.RegionDatabase;
+import me.gnat008.infiniteblocks.regions.ApplicableRegionSet;
 import me.gnat008.infiniteblocks.regions.BlockRegion;
 import me.gnat008.infiniteblocks.regions.BlocksRegionMBRConverter;
 import org.bukkit.entity.Player;
@@ -9,11 +10,9 @@ import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.MBRConverter;
 import org.khelekore.prtree.PRTree;
 import org.khelekore.prtree.SimpleMBR;
+import sun.org.mozilla.javascript.internal.ast.Block;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class PRTreeRegionManager extends RegionManager {
 
@@ -74,6 +73,49 @@ public class PRTreeRegionManager extends RegionManager {
 
         tree = new PRTree<BlockRegion>(converter, BRANCH_FACTOR);
         tree.load(regions.values());
+    }
+
+    @Override
+    public ApplicableRegionSet getApplicableRegions(Vector pt) {
+        pt = pt.floor();
+
+        List<BlockRegion> appRegions = new ArrayList<BlockRegion>();
+        MBR pointsMBR = new SimpleMBR(pt.getX(), pt.getX(), pt.getY(), pt.getY(), pt.getZ(), pt.getZ());
+
+        for (BlockRegion region : tree.find(pointsMBR)) {
+            if (region.contains(pt) && !appRegions.contains(region)) {
+                appRegions.add(region);
+
+                BlockRegion parent = region.getParent();
+
+                while (parent != null) {
+                    if (!appRegions.contains(parent)) {
+                        appRegions.add(parent);
+                    }
+
+                    parent = parent.getParent();
+                }
+            }
+        }
+
+        Collections.sort(appRegions);
+
+        return new ApplicableRegionSet(appRegions, regions.get("__global__"));
+    }
+
+    @Override
+    public ApplicableRegionSet getApplicableRegions(BlockRegion checkRegion) {
+        List<BlockRegion> appRegions = new ArrayList<BlockRegion>();
+        appRegions.addAll(regions.values());
+
+        List<BlockRegion> intersectRegions;
+        try {
+            intersectRegions = checkRegion.getIntersectingRegions(appRegions);
+        } catch (Exception e) {
+            intersectRegions = new ArrayList<BlockRegion>();
+        }
+
+        return new ApplicableRegionSet(intersectRegions, regions.get("__global__"));
     }
 
     @Override

@@ -2,6 +2,7 @@ package me.gnat008.infiniteblocks.regions;
 
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;
+import me.gnat008.infiniteblocks.exceptions.UnsupportedIntersectionException;
 
 import java.util.ArrayList;
 import java.util.List;

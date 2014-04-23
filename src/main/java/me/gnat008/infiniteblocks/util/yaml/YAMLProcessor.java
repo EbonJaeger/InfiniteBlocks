@@ -8,6 +8,7 @@ package me.gnat008.infiniteblocks.util.yaml;
  */
 
 import com.sk89q.util.StringUtil;
+import me.gnat008.infiniteblocks.exceptions.YAMLProcessorException;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
