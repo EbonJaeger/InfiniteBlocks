@@ -8,7 +8,6 @@ import me.gnat008.infiniteblocks.command.InfiniteBlocksCommand;
 import me.gnat008.infiniteblocks.config.ConfigurationManager;
 import me.gnat008.infiniteblocks.listeners.MobArenaListener;
 import me.gnat008.infiniteblocks.managers.GlobalRegionManager;
-import me.gnat008.infiniteblocks.managers.RegionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -152,7 +151,7 @@ public class InfiniteBlocks extends JavaPlugin {
             try {
                 output = new FileOutputStream(actual);
                 byte[] buf = new byte[8192];
-                int length = 0;
+                int length;
 
                 while ((length = input.read(buf)) > 0) {
                     output.write(buf, 0, length);
@@ -163,9 +162,7 @@ public class InfiniteBlocks extends JavaPlugin {
                 e.printStackTrace();
             } finally {
                 try {
-                    if (input != null) {
-                        input.close();
-                    }
+                    input.close();
                 } catch (IOException ignore) {
 
                 }

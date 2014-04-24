@@ -110,7 +110,7 @@ public class YAMLDatabase extends AbstractRegionDatabase {
 
         // Relink parents.
         for (Map.Entry<String, BlockRegion> entry : parentSets.entrySet()) {
-            BlockRegion parent = regions.get(entry.getValue());
+            BlockRegion parent = regions.get(entry.getKey());
             if (parent != null) {
                 try {
                     entry.getValue().setParent(parent);

@@ -3,8 +3,8 @@ package me.gnat008.infiniteblocks.managers;
 import me.gnat008.infiniteblocks.InfiniteBlocks;
 import me.gnat008.infiniteblocks.config.ConfigurationManager;
 import me.gnat008.infiniteblocks.databases.RegionDatabase;
-import me.gnat008.infiniteblocks.exceptions.RegionDatabaseException;
 import me.gnat008.infiniteblocks.databases.YAMLDatabase;
+import me.gnat008.infiniteblocks.exceptions.RegionDatabaseException;
 import org.bukkit.World;
 
 import java.io.File;
@@ -61,20 +61,15 @@ public class GlobalRegionManager {
     // Load region information for a world.
     public RegionManager create(World world) {
         String name = world.getName();
-        boolean sql = config.useSqlDatabase;
         RegionDatabase database;
         File file = null;
 
         try {
-            if (!sql) {
-                file = getPath(name);
-                database = new YAMLDatabase(file, plugin.getLogger());
+            file = getPath(name);
+            database = new YAMLDatabase(file, plugin.getLogger());
 
-                // Store the last modified date so we can track changes.
-                lastModified.put(name, file.lastModified());
-            } else {
-                database = new MySQLDatabase(config, name, plugin.getLogger());
-            }
+            // Store the last modified date so we can track changes.
+            lastModified.put(name, file.lastModified());
 
             // Create a manager.
             RegionManager manager = new PRTreeRegionManager(database);
@@ -86,12 +81,7 @@ public class GlobalRegionManager {
 
             return manager;
         } catch (RegionDatabaseException e) {
-            String logStr = "Failed to load regions from ";
-            if (sql) {
-                logStr += "SQL Database <" + config.sqlDsn + "> ";
-            } else {
-                logStr += "file \"" + file + "\" ";
-            }
+            String logStr = "Failed to load regions from file \"" + file + "\" ";
 
             plugin.getLogger().severe(logStr + " : " + e.getMessage());
             e.printStackTrace();

@@ -4,7 +4,6 @@ import com.sk89q.worldedit.BlockVector;
 import me.gnat008.infiniteblocks.regions.BlockRegion;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,8 +115,8 @@ public class RegionPrintoutBuilder {
         builder.append(ChatColor.BLUE);
         builder.append("Bounds: ");
         builder.append(ChatColor.YELLOW);
-        builder.append(" (" + min.getBlockX() + "," + min.getBlockY() + "," + min.getBlockZ() + ")");
-        builder.append(" -> (" + max.getBlockX() + "," + max.getBlockY() + "," + max.getBlockZ() + ")");
+        builder.append(" (").append(min.getBlockX()).append(",").append(min.getBlockY()).append(",").append(min.getBlockZ()).append(")");
+        builder.append(" -> (").append(max.getBlockX()).append(",").append(max.getBlockY()).append(",").append(max.getBlockZ()).append(")");
 
         newLine();
     }

@@ -20,7 +20,10 @@ import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class YAMLProcessor extends YAMLNode {
 
@@ -138,9 +141,7 @@ public class YAMLProcessor extends YAMLNode {
                 yaml.dump(root, writer);
             } else {
                 // Iterate through each root-level property and dump.
-                for (Iterator<Map.Entry<String, Object>> i = root.entrySet().iterator(); i.hasNext(); ) {
-                    Map.Entry<String, Object> entry = i.next();
-
+                for (Map.Entry<String, Object> entry : root.entrySet()) {
                     // Output comment, if present.
                     String comment = comments.get(entry.getKey());
                     if (comment != null) {
