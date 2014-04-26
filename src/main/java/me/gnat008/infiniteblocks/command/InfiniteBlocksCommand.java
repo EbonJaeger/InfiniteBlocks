@@ -189,7 +189,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
                 }
 
             case REMOVE:
-                if (args.length < 2 || args.length > 2) {
+                if (args.length == 2) {
                     try {
                         remove(player, args[1]);
                     } catch (CommandException e) {
@@ -418,7 +418,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
         BlockRegion region = createRegionFromSelection(player, validID);
 
         // Set the region's owner.
-        region.setOwner(player.getUniqueId().toString());
+        region.setOwner(player);
 
         regionManager.addRegion(region);
         commitChanges(player, regionManager);
@@ -442,7 +442,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
         BlockRegion region = createRegionFromSelection(player, validID);
 
         // Copy details from the old region to the new one.
-        region.setOwner(existing.getOwner());
+        region.setOwner(existing.getOwnerUUID());
         try {
             region.setParent(existing.getParent());
         } catch (BlockRegion.CircularInheritanceException ignore) {

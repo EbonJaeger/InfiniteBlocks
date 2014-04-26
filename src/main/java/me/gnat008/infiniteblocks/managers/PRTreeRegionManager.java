@@ -10,7 +10,6 @@ import org.khelekore.prtree.MBR;
 import org.khelekore.prtree.MBRConverter;
 import org.khelekore.prtree.PRTree;
 import org.khelekore.prtree.SimpleMBR;
-import sun.org.mozilla.javascript.internal.ast.Block;
 
 import java.util.*;
 
@@ -150,14 +149,14 @@ public class PRTreeRegionManager extends RegionManager {
         List<BlockRegion> appRegions = new ArrayList<BlockRegion>();
 
         for (BlockRegion other : regions.values()) {
-            if (other.getOwner().contains(player.getName())) {
+            if (other.getOwnerUUID().contains(player.getUniqueId().toString())) {
                 continue;
             }
 
             appRegions.add(other);
         }
 
-        List<BlockRegion> intersectRegions = new ArrayList<BlockRegion>();
+        List<BlockRegion> intersectRegions;
         try {
             intersectRegions = checkRegion.getIntersectingRegions(appRegions);
         } catch (Exception e) {
@@ -177,7 +176,7 @@ public class PRTreeRegionManager extends RegionManager {
         int count = 0;
 
         for (Map.Entry<String, BlockRegion> entry : regions.entrySet()) {
-            if (entry.getValue().getOwner().contains(player.getName())) {
+            if (entry.getValue().getOwnerUUID().contains(player.getUniqueId().toString())) {
                 count++;
             }
         }

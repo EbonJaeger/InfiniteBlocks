@@ -66,15 +66,11 @@ public class GlobalRegionManager {
         File file = null;
 
         try {
-            if (!sql) {
-                file = getPath(name);
-                database = new YAMLDatabase(file, plugin.getLogger());
+            file = getPath(name);
+            database = new YAMLDatabase(file, plugin.getLogger());
 
-                // Store the last modified date so we can track changes.
-                lastModified.put(name, file.lastModified());
-            } else {
-                database = new MySQLDatabase(config, name, plugin.getLogger());
-            }
+            // Store the last modified date so we can track changes.
+            lastModified.put(name, file.lastModified());
 
             // Create a manager.
             RegionManager manager = new PRTreeRegionManager(database);

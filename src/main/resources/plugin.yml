@@ -1,5 +1,5 @@
 main: me.gnat008.infiniteblocks.InfiniteBlocks
-version: 0.0.1
+version: 0.1.2
 name: InfiniteBlocks
 author: Gnat008
 depend: [WorldEdit]
@@ -7,7 +7,7 @@ depend: [WorldEdit]
 commands:
   infiniteblocks:
     description: View information and commands related to the InfiniteBlocks plugin.
-    aliases: [ib]
+    aliases: [infiniteblocks, ib]
 
 permissions:
   infiniteblocks.*:
@@ -33,7 +33,7 @@ permissions:
     default: false
   infiniteblocks.reload:
     default: false
-  infiniteblocks.remove
+  infiniteblocks.remove:
     default: false
-  infiniteblocks.setparent
+  infiniteblocks.setparent:
     default: false

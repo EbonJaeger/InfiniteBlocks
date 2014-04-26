@@ -6,6 +6,7 @@ import com.sk89q.wepif.PermissionsResolverManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.gnat008.infiniteblocks.command.InfiniteBlocksCommand;
 import me.gnat008.infiniteblocks.config.ConfigurationManager;
+import me.gnat008.infiniteblocks.exceptions.FatalConfigurationLoadingException;
 import me.gnat008.infiniteblocks.listeners.MobArenaListener;
 import me.gnat008.infiniteblocks.managers.GlobalRegionManager;
 import me.gnat008.infiniteblocks.managers.RegionManager;
@@ -61,7 +62,24 @@ public class InfiniteBlocks extends JavaPlugin {
         getCommand("infiniteblocks").setExecutor(new InfiniteBlocksCommand(this));
 
         setupListeners();
+
+        // Load the configuration.
+        try {
+            configuration.load();
+            globalRegionManager.preload();
+        } catch (FatalConfigurationLoadingException e) {
+            e.printStackTrace();
+            pm.disablePlugin(this);
+        }
+
         printToConsole("v" + info.getVersion() + ": Successfully enabled!", false);
+    }
+
+    @Override
+    public void onDisable() {
+        globalRegionManager.unload();
+        configuration.unload();
+        getServer().getScheduler().cancelTasks(this);
     }
 
     private void setupListeners() {

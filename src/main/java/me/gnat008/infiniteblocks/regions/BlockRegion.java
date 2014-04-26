@@ -3,11 +3,14 @@ package me.gnat008.infiniteblocks.regions;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;
+import me.gnat008.infiniteblocks.InfiniteBlocks;
 import me.gnat008.infiniteblocks.exceptions.UnsupportedIntersectionException;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.awt.geom.Line2D;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public abstract class BlockRegion implements Comparable<BlockRegion> {
@@ -17,8 +20,11 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
 
     private static final Pattern idPattern = Pattern.compile("^[A-Za-z0-9_,'\\-\\+/]{1,}$");
 
+    private InfiniteBlocks plugin = InfiniteBlocks.getInstance();
+
     private String id;
-    private String owner;
+    private String ownerName;
+    private UUID ownerUUID;
     private BlockRegion parent;
     private int priority;
 
@@ -98,8 +104,12 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
         this.parent = parent;
     }
 
-    public String getOwner() {
-        return owner;
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public String getOwnerUUID() {
+        return ownerUUID.toString();
     }
 
     public BlockVector getMin() {
@@ -110,12 +120,28 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
         return max;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setOwner(Player player) {
+        this.ownerUUID = player.getUniqueId();
+
+        if (player.isOnline()) {
+            this.ownerName = player.getName();
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    ownerName = Bukkit.getOfflinePlayer(ownerUUID).getName();
+                }
+            });
+        }
+    }
+
+    public void setOwner(String uuid) {
+        Player player = Bukkit.getPlayer(UUID.fromString(uuid));
+        setOwner(player);
     }
 
     public boolean isOwner(Player player) {
-        if (owner.equalsIgnoreCase(player.getName())) {
+        if (ownerUUID.equals(player.getUniqueId())) {
             return true;
         } else {
             return false;
@@ -123,7 +149,7 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
     }
 
     public boolean hasOwner() {
-        return owner != null;
+        return ownerUUID != null;
     }
 
     public abstract List<BlockVector2D> getPoints();

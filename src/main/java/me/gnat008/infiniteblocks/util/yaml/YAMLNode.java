@@ -4,10 +4,7 @@ import com.sk89q.worldedit.BlockVector2D;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.Vector2D;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class YAMLNode {
 
@@ -646,6 +643,16 @@ public class YAMLNode {
             return null;
         } else if (o instanceof Boolean) {
             return (Boolean) o;
+        } else {
+            return null;
+        }
+    }
+
+    private static UUID castUUID(Object o) {
+        if (o == null) {
+            return null;
+        } else if (o instanceof UUID) {
+            return (UUID) o;
         } else {
             return null;
         }

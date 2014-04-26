@@ -96,7 +96,7 @@ public class RegionPrintoutBuilder {
         builder.append(ChatColor.BLUE);
         builder.append("Owner: ");
 
-        String owner = region.getOwner();
+        String owner = region.getOwnerName();
         if (owner != null) {
             builder.append(ChatColor.YELLOW);
             builder.append(owner);
