@@ -119,6 +119,18 @@ public class RegionPrintoutBuilder {
         newLine();
     }
 
+    // Add information about priority.
+    public void appendPriority() {
+        builder.append(ChatColor.BLUE);
+        builder.append("Priority: ");
+
+        String priority = String.valueOf(region.getPriority());
+        builder.append(ChatColor.YELLOW);
+        builder.append(priority);
+
+        newLine();
+    }
+
     // Add information about coords.
     public void appendBounds() {
         BlockVector min = region.getMinimumPoint();
@@ -146,6 +158,7 @@ public class RegionPrintoutBuilder {
         appendParents();
         appendOwner();
         appendDelay();
+        appendPriority();
         appendBounds();
     }
 

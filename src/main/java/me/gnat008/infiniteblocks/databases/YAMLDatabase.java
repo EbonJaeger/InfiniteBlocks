@@ -90,14 +90,16 @@ public class YAMLDatabase extends AbstractRegionDatabase {
                     continue;
                 }
 
-                //Integer priority = checkNonNull(node.getInt("priority"));
-                //region.setPriority(priority);
+                Integer priority = checkNonNull(node.getInt("priority"));
+                region.setPriority(priority);
+
                 //setFlags(region, node.getNode("flags"));
 
                 region.setOwner(node.getString("owner_uuid"));
                 region.setDelay(node.getInt("delay"));
 
                 //region.setMembers(parseDomain(node.getNode("members")));
+
                 regions.put(id, region);
 
                 String parentID = node.getString("parent");
@@ -166,6 +168,7 @@ public class YAMLDatabase extends AbstractRegionDatabase {
             }
 
             node.setProperty("delay", region.getDelay());
+            node.setProperty("priority", region.getPriority());
             node.setProperty("owner_uuid", region.getOwnerUUID());
 
             BlockRegion parent = region.getParent();

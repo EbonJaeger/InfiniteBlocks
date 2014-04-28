@@ -7,6 +7,7 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.gnat008.infiniteblocks.command.InfiniteBlocksCommand;
 import me.gnat008.infiniteblocks.config.ConfigurationManager;
 import me.gnat008.infiniteblocks.exceptions.FatalConfigurationLoadingException;
+import me.gnat008.infiniteblocks.listeners.BlockBreakEventListener;
 import me.gnat008.infiniteblocks.listeners.MobArenaListener;
 import me.gnat008.infiniteblocks.managers.GlobalRegionManager;
 import org.bukkit.Bukkit;
@@ -48,7 +49,7 @@ public class InfiniteBlocks extends JavaPlugin {
         plugin = this;
         pm = getServer().getPluginManager();
 
-        // Get the WorldEdit plugin
+        // Get the WorldEdit plugin.
         if (pm.isPluginEnabled("WorldEdit")) {
             wePlugin = (WorldEditPlugin) pm.getPlugin("WorldEdit");
             printToConsole("WorldEdit found!", false);
@@ -57,9 +58,10 @@ public class InfiniteBlocks extends JavaPlugin {
             pm.disablePlugin(this);
         }
 
-        // Set the Command Executor
+        // Set the Command Executor.
         getCommand("infiniteblocks").setExecutor(new InfiniteBlocksCommand(this));
 
+        // Set up and register listeners.
         setupListeners();
 
         // Load the configuration.
@@ -90,6 +92,8 @@ public class InfiniteBlocks extends JavaPlugin {
             foundMA = true;
             printToConsole("MobArena found!", false);
         }
+
+        pm.registerEvents(new BlockBreakEventListener(this), this);
     }
 
     public static void printToConsole(String msg, boolean warn) {

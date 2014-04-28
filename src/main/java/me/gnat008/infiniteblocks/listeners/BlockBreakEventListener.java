@@ -56,6 +56,15 @@ public class BlockBreakEventListener implements Listener {
         }
     }
 
+    /**
+     * Checks if the given block is in any region.
+     * Returns null if not in any region. If the block is in
+     * multiple regions, the region with the highest priority
+     * is returned.
+     *
+     * @param block The block that we are checking.
+     * @return A BlockRegion if the block is in one, or null.
+     */
     private BlockRegion checkBlockLocation(Block block) {
         World world = block.getWorld();
         RegionManager regionManager = plugin.getGlobalRegionManager().get(world);
@@ -74,6 +83,13 @@ public class BlockBreakEventListener implements Listener {
         return null;
     }
 
+    /**
+     * Checks if the given block type is in the list of blocks to
+     * replace in the configuration files.
+     *
+     * @param block The block that we are checking.
+     * @return If the block is listed in the configuration file.
+     */
     private boolean checkBlockType(Block block) {
         Material material = block.getType();
 

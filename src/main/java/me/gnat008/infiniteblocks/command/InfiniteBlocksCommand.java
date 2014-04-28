@@ -20,10 +20,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +29,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
     private InfiniteBlocks plugin;
     private WorldEditPlugin we;
 
-    private enum Action {DEFINE, HELP, INFO, LIST, LOAD, REDEFINE, RELOAD, REMOVE, SETDELAY, SETPARENT}
+    private enum Action {DEFINE, HELP, INFO, LIST, LOAD, REDEFINE, RELOAD, REMOVE, SETDELAY, SETPARENT, SETPRIORITY}
 
     public InfiniteBlocksCommand(InfiniteBlocks plugin) {
         this.plugin = plugin;
@@ -262,6 +259,25 @@ public class InfiniteBlocksCommand implements CommandExecutor {
 
                     return true;
                 }
+
+            case SETPRIORITY:
+                if (args.length == 3) {
+                    try {
+                        int priority;
+                        try {
+                            priority = Integer.parseInt(args[2]);
+                        } catch (ClassCastException e) {
+                            displayHelp(player);
+                            return true;
+                        }
+
+                        setPriority(player, args[1], priority);
+                    } catch (CommandException e) {
+                        InfiniteBlocks.printToPlayer(player, e.getMessage(), true);
+                    }
+
+                    return true;
+                }
         }
 
         return false;
@@ -416,7 +432,8 @@ public class InfiniteBlocksCommand implements CommandExecutor {
         help += "\nCommands Usage: {/infiniteblocks, /ib} <cmd> [args]";
         help += "\nKey: cmd <required> [optional]";
         help += ChatColor.WHITE;
-        help += "\ndefine <id>, help, info [id], list, load [world], redefine <id>, reload, remove <id>, setdelay <id> <delay-seconds>, setparent <parent_id> <child_id>";
+        help += "\ndefine <id>, help, info [id], list, load [world], redefine <id>, reload, remove <id>, " +
+                "setdelay <id> <delay-seconds>, setparent <parent_id> <child_id>, setpriority <id> <priority>";
         help += "\n";
 
         player.sendMessage(help);
@@ -442,6 +459,9 @@ public class InfiniteBlocksCommand implements CommandExecutor {
         // Set the region's delay.
         region.setDelay(plugin.getGlobalStateManager().get(player.getWorld()).defaultDelay);
 
+        // Set the region's priority.
+        region.setPriority(0);
+
         regionManager.addRegion(region);
         commitChanges(player, regionManager);
 
@@ -465,6 +485,8 @@ public class InfiniteBlocksCommand implements CommandExecutor {
 
         // Copy details from the old region to the new one.
         region.setOwner(existing.getOwnerUUID());
+        region.setDelay(existing.getDelay());
+        region.setPriority(existing.getPriority());
         try {
             region.setParent(existing.getParent());
         } catch (BlockRegion.CircularInheritanceException ignore) {
@@ -560,6 +582,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
 
         try {
             childRegion.setParent(parentRegion);
+            childRegion.setPriority(parentRegion.getPriority() + 1);
         } catch (BlockRegion.CircularInheritanceException e) {
             // Tell the user what's wrong.
             RegionPrintoutBuilder printout = new RegionPrintoutBuilder(parentRegion);
@@ -573,6 +596,8 @@ public class InfiniteBlocksCommand implements CommandExecutor {
             printout.append(")");
             printout.send(player);
             return;
+        } catch (NullPointerException e) {
+            throw new CommandException("Region '" + parent + "' not found!");
         }
 
         // Save to disk.
@@ -680,6 +705,27 @@ public class InfiniteBlocksCommand implements CommandExecutor {
             commitChanges(player, regionManager);
 
             InfiniteBlocks.printToPlayer(player, "New delay set for region: " + ChatColor.WHITE + id, false);
+        } else {
+            throw new CommandException("Could not find region '" + id + "'!");
+        }
+    }
+
+    // Set the priority for a region.
+    public void setPriority(Player player, String id, int priority) throws CommandException {
+        World world = player.getWorld();
+        String uuid = player.getUniqueId().toString();
+
+        RegionManager regionManager = plugin.getGlobalRegionManager().get(world);
+        BlockRegion region = regionManager.getRegion(id);
+
+        if (region != null) {
+            if (region.getOwnerUUID().equals(uuid)) {
+                region.setPriority(priority);
+
+                InfiniteBlocks.printToPlayer(player, "New priority set for region: " + ChatColor.WHITE + id, false);
+            } else {
+                throw new CommandException("You are not the owner of this region!");
+            }
         } else {
             throw new CommandException("Could not find region '" + id + "'!");
         }
