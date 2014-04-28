@@ -583,7 +583,7 @@ public class YAMLNode {
      */
     @SuppressWarnings("unchecked")
     public YAMLNode getNode(String path) {
-        Object raw = getList(path);
+        Object raw = getProperty(path);
         if (raw instanceof Map) {
             return new YAMLNode((Map<String, Object>) raw, writeDefaults);
         }

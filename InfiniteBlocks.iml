@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.7.5-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.7.9-R0.1-SNAPSHOT" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: com.garbagemule.MobArena:MobArena:0.96.3">
         <CLASSES>

@@ -26,6 +26,7 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
     private String ownerName;
     private UUID ownerUUID;
     private BlockRegion parent;
+    private int delay;
     private int priority;
 
     public BlockRegion(String id) {
@@ -120,6 +121,14 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
         return max;
     }
 
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
     public void setOwner(Player player) {
         this.ownerUUID = player.getUniqueId();
 
@@ -136,8 +145,18 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
     }
 
     public void setOwner(String uuid) {
-        Player player = Bukkit.getPlayer(UUID.fromString(uuid));
-        setOwner(player);
+        Player player;
+        try {
+            player = Bukkit.getPlayer(UUID.fromString(uuid));
+        } catch (NullPointerException e) {
+            player = (Player) Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+        }
+
+        if (player != null) {
+            setOwner(player);
+        } else {
+            throw new NullPointerException();
+        }
     }
 
     public boolean isOwner(Player player) {

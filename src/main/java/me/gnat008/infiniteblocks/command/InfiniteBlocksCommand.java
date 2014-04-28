@@ -32,7 +32,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
     private InfiniteBlocks plugin;
     private WorldEditPlugin we;
 
-    private enum Action {DEFINE, HELP, INFO, LIST, LOAD, REDEFINE, RELOAD, REMOVE, SETPARENT}
+    private enum Action {DEFINE, HELP, INFO, LIST, LOAD, REDEFINE, RELOAD, REMOVE, SETDELAY, SETPARENT}
 
     public InfiniteBlocksCommand(InfiniteBlocks plugin) {
         this.plugin = plugin;
@@ -230,6 +230,25 @@ public class InfiniteBlocksCommand implements CommandExecutor {
                     return true;
                 }
 
+            case SETDELAY:
+                if (args.length == 3) {
+                    try {
+                        int delay;
+                        try {
+                            delay = Integer.parseInt(args[2]);
+                        } catch (ClassCastException e) {
+                            displayHelp(player);
+                            return true;
+                        }
+
+                        setDelay(player, args[1], delay);
+                    } catch (CommandException e) {
+                        InfiniteBlocks.printToPlayer(player, e.getMessage(), true);
+                    }
+
+                    return true;
+                }
+
             case SETPARENT:
                 if (args.length > 3 || args.length < 3) {
                     displayHelp(player);
@@ -397,7 +416,7 @@ public class InfiniteBlocksCommand implements CommandExecutor {
         help += "\nCommands Usage: {/infiniteblocks, /ib} <cmd> [args]";
         help += "\nKey: cmd <required> [optional]";
         help += ChatColor.WHITE;
-        help += "\ndefine <id>, help, info [id], list, load [world], redefine <id>, reload, remove <id>, setparent <parent_id> <child_id>";
+        help += "\ndefine <id>, help, info [id], list, load [world], redefine <id>, reload, remove <id>, setdelay <id> <delay-seconds>, setparent <parent_id> <child_id>";
         help += "\n";
 
         player.sendMessage(help);
@@ -419,6 +438,9 @@ public class InfiniteBlocksCommand implements CommandExecutor {
 
         // Set the region's owner.
         region.setOwner(player);
+
+        // Set the region's delay.
+        region.setDelay(plugin.getGlobalStateManager().get(player.getWorld()).defaultDelay);
 
         regionManager.addRegion(region);
         commitChanges(player, regionManager);
@@ -643,6 +665,23 @@ public class InfiniteBlocksCommand implements CommandExecutor {
             if (minecraftLogger != null) {
                 minecraftLogger.removeHandler(handler);
             }
+        }
+    }
+
+    // Set the replace delay for a region.
+    public void setDelay(Player player, String id, int seconds) throws CommandException {
+        World world = player.getWorld();
+
+        RegionManager regionManager = plugin.getGlobalRegionManager().get(world);
+        BlockRegion region = regionManager.getRegion(id);
+
+        if (region != null) {
+            region.setDelay(seconds);
+            commitChanges(player, regionManager);
+
+            InfiniteBlocks.printToPlayer(player, "New delay set for region: " + ChatColor.WHITE + id, false);
+        } else {
+            throw new CommandException("Could not find region '" + id + "'!");
         }
     }
 }

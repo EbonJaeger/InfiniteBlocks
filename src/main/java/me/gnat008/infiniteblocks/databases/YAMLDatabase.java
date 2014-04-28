@@ -95,6 +95,7 @@ public class YAMLDatabase extends AbstractRegionDatabase {
                 //setFlags(region, node.getNode("flags"));
 
                 region.setOwner(node.getString("owner_uuid"));
+                region.setDelay(node.getInt("delay"));
 
                 //region.setMembers(parseDomain(node.getNode("members")));
                 regions.put(id, region);
@@ -105,7 +106,6 @@ public class YAMLDatabase extends AbstractRegionDatabase {
                 }
             } catch (NullPointerException e) {
                 logger.warning("Missing data for region id '" + id + "'!");
-                e.printStackTrace();
             }
         }
 
@@ -165,6 +165,7 @@ public class YAMLDatabase extends AbstractRegionDatabase {
                 node.setProperty("type", region.getClass().getCanonicalName());
             }
 
+            node.setProperty("delay", region.getDelay());
             node.setProperty("owner_uuid", region.getOwnerUUID());
 
             BlockRegion parent = region.getParent();

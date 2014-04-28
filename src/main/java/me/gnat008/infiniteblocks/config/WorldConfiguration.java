@@ -34,7 +34,10 @@ public class WorldConfiguration {
     // Configuration data start.
     public boolean summaryOnStart;
 
+    public int defaultDelay;
     public int maxRegionCountPerPlayer;
+
+    public List<String> blocksToReplace;
 
     private Map<String, Integer> maxRegionCounts;
     // Configuration data end.
@@ -173,6 +176,12 @@ public class WorldConfiguration {
             }
         }
 
+        defaultDelay = getInt("regions.default-delay-seconds", 10);
+
+        List<String> blocksToReplaceDef = new ArrayList<String>();
+        blocksToReplaceDef.add("tnt");
+        blocksToReplace = getStringList("regions.blocks-to-replace", blocksToReplaceDef);
+
         config.setHeader(CONFIG_HEADER);
 
         config.save();
@@ -199,5 +208,13 @@ public class WorldConfiguration {
         }
 
         return max;
+    }
+
+    public int getDefaultDelay() {
+        return defaultDelay;
+    }
+
+    public List<String> getBlocksToReplace() {
+        return blocksToReplace;
     }
 }

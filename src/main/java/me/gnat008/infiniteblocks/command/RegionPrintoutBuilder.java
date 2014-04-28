@@ -108,6 +108,18 @@ public class RegionPrintoutBuilder {
         newLine();
     }
 
+    // Add information about delay.
+    public void appendDelay() {
+        builder.append(ChatColor.BLUE);
+        builder.append("Delay: ");
+
+        String delay = String.valueOf(region.getDelay());
+        builder.append(ChatColor.YELLOW);
+        builder.append(delay);
+
+        newLine();
+    }
+
     // Add information about coords.
     public void appendBounds() {
         BlockVector min = region.getMinimumPoint();
@@ -134,6 +146,7 @@ public class RegionPrintoutBuilder {
         appendBasics();
         appendParents();
         appendOwner();
+        appendDelay();
         appendBounds();
     }
 
