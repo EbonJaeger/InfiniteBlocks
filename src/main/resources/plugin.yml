@@ -1,5 +1,5 @@
 main: me.gnat008.infiniteblocks.InfiniteBlocks
-version: 0.2.0_010
+version: 0.2.0_014
 name: InfiniteBlocks
 author: Gnat008
 depend: [WorldEdit]

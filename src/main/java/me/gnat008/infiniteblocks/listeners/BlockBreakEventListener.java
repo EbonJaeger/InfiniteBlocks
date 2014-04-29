@@ -72,12 +72,22 @@ public class BlockBreakEventListener implements Listener {
         Location loc = block.getLocation();
         ApplicableRegionSet regionSet = regionManager.getApplicableRegions(loc);
 
-        if (regionSet == null || regionSet.size() > 0) {
+        if (regionSet == null || regionSet.size() == 0) {
             return null;
         } else if (regionSet.size() == 1) {
             return regionSet.iterator().next();
         } else if (regionSet.size() > 1) {
-            // TODO: Check priority of regions; highest priority gets returned.
+            int highestPriority = regionSet.iterator().next().getPriority();
+            BlockRegion highestRegion = regionSet.iterator().next();
+
+            for (BlockRegion region : regionSet) {
+                if (highestPriority < region.getPriority()) {
+                    highestPriority = region.getPriority();
+                    highestRegion = region;
+                }
+            }
+
+            return highestRegion;
         }
 
         return null;

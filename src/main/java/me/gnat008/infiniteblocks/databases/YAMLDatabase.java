@@ -108,6 +108,7 @@ public class YAMLDatabase extends AbstractRegionDatabase {
                 }
             } catch (NullPointerException e) {
                 logger.warning("Missing data for region id '" + id + "'!");
+                e.printStackTrace();
             }
         }
 

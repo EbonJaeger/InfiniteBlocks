@@ -6,7 +6,7 @@
 
     <groupId>me.gnat008</groupId>
     <artifactId>InfiniteBlocks</artifactId>
-    <version>0.2.0_010</version>
+    <version>0.2.0_014</version>
     <repositories>
         <repository>
             <id>bukkit-repo</id>
