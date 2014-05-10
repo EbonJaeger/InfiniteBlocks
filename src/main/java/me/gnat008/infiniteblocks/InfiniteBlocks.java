@@ -1,23 +1,26 @@
 package me.gnat008.infiniteblocks;
 
-import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.framework.ArenaMaster;
 import com.sk89q.wepif.PermissionsResolverManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.gnat008.infiniteblocks.command.InfiniteBlocksCommand;
 import me.gnat008.infiniteblocks.config.ConfigurationManager;
 import me.gnat008.infiniteblocks.exceptions.FatalConfigurationLoadingException;
 import me.gnat008.infiniteblocks.listeners.BlockBreakEventListener;
-import me.gnat008.infiniteblocks.listeners.MobArenaListener;
+import me.gnat008.infiniteblocks.listeners.BlockIgniteListener;
+import me.gnat008.infiniteblocks.listeners.LeafDecayListener;
 import me.gnat008.infiniteblocks.managers.GlobalRegionManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import me.gnat008.infiniteblocks.managers.RegionManager;
+import me.gnat008.infiniteblocks.regions.ApplicableRegionSet;
+import me.gnat008.infiniteblocks.regions.BlockRegion;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
+import java.util.List;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -29,7 +32,6 @@ public class InfiniteBlocks extends JavaPlugin {
 
     private static boolean foundMA = false;
 
-    public static ArenaMaster am;
     public static PluginDescriptionFile info;
     public static WorldEditPlugin wePlugin;
 
@@ -84,16 +86,9 @@ public class InfiniteBlocks extends JavaPlugin {
     }
 
     private void setupListeners() {
-        MobArena maPlugin = (MobArena) pm.getPlugin("MobArena");
-
-        if (maPlugin != null && maPlugin.isEnabled()) {
-            am = maPlugin.getArenaMaster();
-            pm.registerEvents(new MobArenaListener(this), this);
-            foundMA = true;
-            printToConsole("MobArena found!", false);
-        }
-
         pm.registerEvents(new BlockBreakEventListener(this), this);
+        pm.registerEvents(new BlockIgniteListener(this), this);
+        pm.registerEvents(new LeafDecayListener(this), this);
     }
 
     public static void printToConsole(String msg, boolean warn) {
@@ -198,5 +193,86 @@ public class InfiniteBlocks extends JavaPlugin {
                 }
             }
         }
+    }
+
+    /**
+     * Checks if the given block is in any region.
+     * Returns null if not in any region. If the block is in
+     * multiple regions, the region with the highest priority
+     * is returned.
+     *
+     * @param block The block that we are checking.
+     * @return A BlockRegion if the block is in one, or null.
+     */
+    public BlockRegion getRegionFromBlock(Block block) {
+        World world = block.getWorld();
+        RegionManager regionManager = getGlobalRegionManager().get(world);
+
+        Location loc = block.getLocation();
+        ApplicableRegionSet regionSet = regionManager.getApplicableRegions(loc);
+
+        if (regionSet == null || regionSet.size() == 0) {
+            return null;
+        } else if (regionSet.size() == 1) {
+            return regionSet.iterator().next();
+        } else if (regionSet.size() > 1) {
+            int highestPriority = regionSet.iterator().next().getPriority();
+            BlockRegion highestRegion = regionSet.iterator().next();
+
+            for (BlockRegion region : regionSet) {
+                if (highestPriority < region.getPriority()) {
+                    highestPriority = region.getPriority();
+                    highestRegion = region;
+                }
+            }
+
+            return highestRegion;
+        }
+
+        return null;
+    }
+
+    /**
+     * Checks if the given block type is in the list of blocks to
+     * replace in the configuration files.
+     *
+     * @param block The block that we are checking.
+     * @return If the block is listed in the configuration file.
+     */
+    public boolean replaceBlock(Block block) {
+        Material material = block.getType();
+
+        World world = block.getWorld();
+        List<String> blockTypesReplace = getGlobalStateManager().get(world).getBlocksToReplace();
+
+        for (String type : blockTypesReplace) {
+            if (material.toString().equalsIgnoreCase(type)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the given block type is in the list of blocks to
+     * protect in the configuration files.
+     *
+     * @param block The block that we are checking.
+     * @return If the block is listed in the configuration file.
+     */
+    public boolean protectBlock(Block block) {
+        Material material = block.getType();
+
+        World world = block.getWorld();
+        List<String> blockTypesProtect = getGlobalStateManager().get(world).getBlocksToProtect();
+
+        for (String type : blockTypesProtect) {
+            if (material.toString().equalsIgnoreCase(type)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

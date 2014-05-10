@@ -6,7 +6,7 @@
 
     <groupId>me.gnat008</groupId>
     <artifactId>InfiniteBlocks</artifactId>
-    <version>0.2.0_014</version>
+    <version>0.2.1_016</version>
     <repositories>
         <repository>
             <id>bukkit-repo</id>
@@ -23,13 +23,6 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.7.9-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.garbagemule.MobArena</groupId>
-            <artifactId>MobArena</artifactId>
-            <version>0.96.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/MobArena.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.sk89q</groupId>

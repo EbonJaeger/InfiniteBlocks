@@ -9,22 +9,21 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 
 /**
- * Created by Gnat008 on 4/27/2014.
+ * Created by Gnat008 on 5/9/2014.
  */
-public class BlockBreakEventListener implements Listener {
+public class LeafDecayListener implements Listener {
 
     private InfiniteBlocks plugin;
 
-    public BlockBreakEventListener(InfiniteBlocks plugin) {
+    public LeafDecayListener(InfiniteBlocks plugin) {
         this.plugin = plugin;
-
     }
 
     @EventHandler
-    public void onBlockBreak(BlockBreakEvent event) {
+    public void onLeafDecay(LeavesDecayEvent event) {
         if (event.getBlock() != null) {
             Block block = event.getBlock();
             if (plugin.replaceBlock(block)) {

@@ -11,15 +11,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.bukkit:bukkit:1.7.9-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="module-library">
-      <library name="Maven: com.garbagemule.MobArena:MobArena:0.96.3">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/MobArena.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="Maven: com.sk89q:worldedit:6.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: de.schlichtherle:truezip:6.8.3" level="project" />
     <orderEntry type="library" name="Maven: rhino:js:1.7R2" level="project" />
