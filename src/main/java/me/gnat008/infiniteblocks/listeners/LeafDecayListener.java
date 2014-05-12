@@ -48,18 +48,6 @@ public class LeafDecayListener implements Listener {
                         }
                     }, delay * 20);
                 }
-            } else if (plugin.protectBlock(block)) {
-                BlockRegion region;
-                try {
-                    region = plugin.getRegionFromBlock(block);
-                } catch (NullPointerException e) {
-                    // Block is not in any region.
-                    return;
-                }
-
-                if (region != null) {
-                    event.setCancelled(true);
-                }
             }
         }
     }

@@ -253,26 +253,4 @@ public class InfiniteBlocks extends JavaPlugin {
 
         return false;
     }
-
-    /**
-     * Checks if the given block type is in the list of blocks to
-     * protect in the configuration files.
-     *
-     * @param block The block that we are checking.
-     * @return If the block is listed in the configuration file.
-     */
-    public boolean protectBlock(Block block) {
-        Material material = block.getType();
-
-        World world = block.getWorld();
-        List<String> blockTypesProtect = getGlobalStateManager().get(world).getBlocksToProtect();
-
-        for (String type : blockTypesProtect) {
-            if (material.toString().equalsIgnoreCase(type)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

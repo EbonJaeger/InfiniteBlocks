@@ -6,6 +6,7 @@ import com.sk89q.worldedit.Vector;
 import me.gnat008.infiniteblocks.InfiniteBlocks;
 import me.gnat008.infiniteblocks.exceptions.UnsupportedIntersectionException;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.awt.geom.Line2D;
@@ -144,18 +145,25 @@ public abstract class BlockRegion implements Comparable<BlockRegion> {
         }
     }
 
+    public void setOwner(final OfflinePlayer offlinePlayer) {
+        this.ownerUUID = offlinePlayer.getUniqueId();
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                ownerName = offlinePlayer.getName();
+            }
+        });
+    }
+
     public void setOwner(String uuid) {
         Player player;
         try {
             player = Bukkit.getPlayer(UUID.fromString(uuid));
-        } catch (NullPointerException e) {
-            player = (Player) Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-        }
-
-        if (player != null) {
             setOwner(player);
-        } else {
-            throw new NullPointerException();
+        } catch (NullPointerException e) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(uuid));
+            setOwner(offlinePlayer);
         }
     }
 

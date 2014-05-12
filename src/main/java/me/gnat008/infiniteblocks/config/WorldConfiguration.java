@@ -38,7 +38,6 @@ public class WorldConfiguration {
     public int maxRegionCountPerPlayer;
 
     public List<String> blocksToReplace;
-    public List<String> blocksToProtect;
 
     private Map<String, Integer> maxRegionCounts;
     // Configuration data end.
@@ -183,11 +182,6 @@ public class WorldConfiguration {
         blocksToReplaceDef.add("tnt");
         blocksToReplace = getStringList("regions.blocks-to-replace", blocksToReplaceDef);
 
-        List<String> blocksToProtectDef = new ArrayList<String>();
-        blocksToProtectDef.add("log");
-        blocksToProtectDef.add("leaves");
-        blocksToProtect = getStringList("regions.blocks-to-protect", blocksToProtectDef);
-
         config.setHeader(CONFIG_HEADER);
 
         config.save();
@@ -222,9 +216,5 @@ public class WorldConfiguration {
 
     public List<String> getBlocksToReplace() {
         return blocksToReplace;
-    }
-
-    public List<String> getBlocksToProtect() {
-        return blocksToProtect;
     }
 }
